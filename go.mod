@@ -1,3 +1,3 @@
-module github.com/praveenmahasena647/downloader
+module github.com/praveenmahasena647/imgDownload
 
-go 1.21.1
+go 1.21.3

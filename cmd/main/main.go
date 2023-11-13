@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/praveenmahasena647/downloader/cmd/internals/links"
+	"github.com/praveenmahasena647/imgDownload/cmd/internals/helpers"
 )
 
 func main() {
-	var link map[string]string = links.GetLinks()
-	var err error = links.GetImg(link)
+	var links = helpers.GetLinks()
+	var err error = helpers.WriteFile(links)
 
 	if err != nil {
 		fmt.Printf("%v", err)
-		os.Exit(-1)
+		os.Exit(1)
 	}
 }
