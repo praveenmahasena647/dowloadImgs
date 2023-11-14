@@ -1,27 +1,37 @@
 package helpers
 
 import (
-	"context"
 	"io"
 	"net/http"
+	"os"
+	"sync"
 )
 
-func HTTPHelper(ctx context.Context, link string, b chan<- []byte, c chan<- int) {
-	var req, reqErr = http.NewRequestWithContext(ctx, "GET", link, nil)
+func HTTPHelper(eCh chan int, wg *sync.WaitGroup, link, fileName string) {
+	defer wg.Done()
+	var req, reqErr = http.NewRequest("GET", link, nil)
+
 	if reqErr != nil {
-		c <- +1
+		eCh <- +1
 		return
 	}
+
 	var res, resErr = http.DefaultClient.Do(req)
+
 	if resErr != nil {
-		c <- +1
+		eCh <- +1
 		return
 	}
-	defer res.Body.Close()
-	var bytes, byteErr = io.ReadAll(res.Body)
+
+	var fileByte, byteErr = io.ReadAll(res.Body)
+
 	if byteErr != nil {
-		c <- +1
+		eCh <- +1
 		return
 	}
-	b <- bytes
+
+	if err := os.WriteFile(fileName, fileByte, 0666); err != nil {
+		eCh <- +1
+		return
+	}
 }
